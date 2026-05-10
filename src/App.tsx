@@ -24,16 +24,21 @@ function App() {
   }
 
   return (
-    <main className="center-layout">
-      <section className="card">
-        <div className="card__header">
+    <main className="app-shell">
+      <header className="topbar">
+        <div>
           <h1>{t("app.title")}</h1>
-          <LanguageSwitcher />
+          <p className="muted">{t("app.subtitle")}</p>
         </div>
-        <p className="muted">{t("app.subtitle")}</p>
-        <button type="button" onClick={handleLogout}>
-          {t("app.logout")}
-        </button>
+        <div className="topbar__actions">
+          <LanguageSwitcher />
+          <button type="button" onClick={handleLogout}>
+            {t("app.logout")}
+          </button>
+        </div>
+      </header>
+      <section className="content-grid">
+        {/* Form goes here */}
       </section>
     </main>
   );
