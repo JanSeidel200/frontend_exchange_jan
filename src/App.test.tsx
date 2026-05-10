@@ -10,6 +10,8 @@ vi.mock("./api/client", () => ({
 describe("App", () => {
   test("renders title", () => {
     render(<App />);
-    expect(screen.getByText("Exchange Rate Analyzer")).toBeInTheDocument();
+    expect(
+        screen.getByText(/Exchange Rate Analyzer|Analýza měnových kurzů/),
+    ).toBeInTheDocument();
   });
 });
