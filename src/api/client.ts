@@ -14,3 +14,13 @@ export async function checkHealth(): Promise<{ status: string }> {
   const response = await api.get<{ status: string }>("/health");
   return response.data;
 }
+
+export async function login(username: string, password: string) {
+  const response = await api.post("/auth/login", { username, password });
+  return response.data;
+}
+
+export async function logout() {
+  const response = await api.post("/auth/logout");
+  return response.data;
+}

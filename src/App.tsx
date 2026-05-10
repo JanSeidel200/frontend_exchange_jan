@@ -1,22 +1,39 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import { checkHealth } from "./api/client";
+import { logout } from "./api/client";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
+import { LoginForm } from "./components/LoginForm";
 import "./index.css";
 
 function App() {
-  const [status, setStatus] = useState<string>("checking...");
+  const { t } = useTranslation();
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {
-    checkHealth()
-      .then((data) => setStatus(data.status))
-      .catch(() => setStatus("backend unreachable"));
-  }, []);
+  async function handleLogout() {
+    await logout();
+    setLoggedIn(false);
+  }
+
+  if (!loggedIn) {
+    return (
+      <main className="center-layout">
+        <LoginForm onLoggedIn={() => setLoggedIn(true)} />
+      </main>
+    );
+  }
 
   return (
     <main className="center-layout">
       <section className="card">
-        <h1>Exchange Rate Analyzer</h1>
-        <p>Backend status: <strong>{status}</strong></p>
+        <div className="card__header">
+          <h1>{t("app.title")}</h1>
+          <LanguageSwitcher />
+        </div>
+        <p className="muted">{t("app.subtitle")}</p>
+        <button type="button" onClick={handleLogout}>
+          {t("app.logout")}
+        </button>
       </section>
     </main>
   );
