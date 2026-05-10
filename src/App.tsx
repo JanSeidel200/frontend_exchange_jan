@@ -1,21 +1,27 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { checkHealth } from "./api/client";
-import "./index.css";
-
+import { logout } from "./api/client";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
-
+import { LoginForm } from "./components/LoginForm";
+import "./index.css";
 
 function App() {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<string>("checking...");
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {
-    checkHealth()
-      .then((data) => setStatus(data.status))
-      .catch(() => setStatus("backend unreachable"));
-  }, []);
+  async function handleLogout() {
+    await logout();
+    setLoggedIn(false);
+  }
+
+  if (!loggedIn) {
+    return (
+      <main className="center-layout">
+        <LoginForm onLoggedIn={() => setLoggedIn(true)} />
+      </main>
+    );
+  }
 
   return (
     <main className="center-layout">
@@ -24,7 +30,10 @@ function App() {
           <h1>{t("app.title")}</h1>
           <LanguageSwitcher />
         </div>
-        <p>{t("app.backendStatus")}: <strong>{status}</strong></p>
+        <p className="muted">{t("app.subtitle")}</p>
+        <button type="button" onClick={handleLogout}>
+          {t("app.logout")}
+        </button>
       </section>
     </main>
   );
