@@ -19,4 +19,12 @@ export const en = {
     cs: "Čeština",
     en: "English",
   },
+  form: {
+    heading: "Analysis settings",
+    base: "Base currency",
+    symbols: "Compared currencies",
+    errors: {
+      currenciesFailed: "Failed to load currency list.",
+    },
+  },
 };

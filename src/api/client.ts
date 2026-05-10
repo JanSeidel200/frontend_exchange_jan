@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import type { CurrencyOption } from "../types";
+
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
 
 export const api = axios.create({
@@ -22,5 +24,10 @@ export async function login(username: string, password: string) {
 
 export async function logout() {
   const response = await api.post("/auth/logout");
+  return response.data;
+}
+
+export async function getCurrencies(): Promise<CurrencyOption[]> {
+  const response = await api.get<CurrencyOption[]>("/currency/currencies");
   return response.data;
 }

@@ -94,3 +94,57 @@ label {
   background: #fff1f5;
   color: #a12c7b;
 }
+
+.app-shell { padding: 2rem; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.topbar h1 { margin: 0; }
+.topbar button { width: auto; margin: 0; }
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 1.5rem;
+}
+
+.panel {
+  background: #fbfbf9;
+  border: 1px solid #d4d1ca;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 50px rgb(40 37 29 / 0.08);
+}
+
+.currency-grid {
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid #d4d1ca;
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.checkbox-row {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 500;
+}
+
+.checkbox-row input { width: auto; }
