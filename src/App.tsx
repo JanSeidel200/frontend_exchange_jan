@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { logout } from "./api/client";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { LoginForm } from "./components/LoginForm";
+import { AnalysisForm } from "./components/AnalysisForm";
 import "./index.css";
 
 function App() {
@@ -38,7 +39,8 @@ function App() {
         </div>
       </header>
       <section className="content-grid">
-        {/* Form goes here */}
+        <AnalysisForm />
+        <div /> {/* Placeholder pro výsledky */}
       </section>
     </main>
   );
