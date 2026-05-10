@@ -19,4 +19,12 @@ export const cs = {
     cs: "Čeština",
     en: "English",
   },
+  form: {
+    heading: "Nastavení výpočtu",
+    base: "Referenční měna",
+    symbols: "Porovnávané měny",
+    errors: {
+      currenciesFailed: "Nepodařilo se načíst seznam měn.",
+    },
+  },
 };
