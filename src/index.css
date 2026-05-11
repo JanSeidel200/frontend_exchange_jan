@@ -148,3 +148,9 @@ label {
 }
 
 .checkbox-row input { width: auto; }
+
+.date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
