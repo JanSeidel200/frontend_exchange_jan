@@ -1,16 +1,23 @@
-import { useEffect, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getCurrencies } from "../api/client";
-import type { CurrencyOption } from "../types";
+import { analyzeRates, getCurrencies } from "../api/client";
+import type { AnalyzeResponse, CurrencyOption } from "../types";
+
+type Props = {
+  onResult: (result: AnalyzeResponse) => void;
+};
 
 const DEFAULT_SYMBOLS = ["CZK", "USD", "GBP", "PLN"];
 
-export function AnalysisForm() {
+export function AnalysisForm({ onResult }: Props) {
   const { t } = useTranslation();
   const [currencies, setCurrencies] = useState<CurrencyOption[]>([]);
   const [base, setBase] = useState("EUR");
   const [symbols, setSymbols] = useState<string[]>(DEFAULT_SYMBOLS);
+  const [startDate, setStartDate] = useState("2025-01-01");
+  const [endDate, setEndDate] = useState("2025-01-31");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,16 +34,39 @@ export function AnalysisForm() {
     );
   }
 
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    setError(null);
+    if (symbols.length === 0) {
+      setError(t("form.errors.noSymbol"));
+      return;
+    }
+    if (endDate < startDate) {
+      setError(t("form.errors.dateOrder"));
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await analyzeRates({
+        base,
+        symbols,
+        start_date: startDate,
+        end_date: endDate,
+      });
+      onResult(result);
+    } catch {
+      setError(t("form.errors.computeFailed"));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <form className="panel">
+    <form className="panel" onSubmit={handleSubmit}>
       <h2>{t("form.heading")}</h2>
 
       <label htmlFor="base">{t("form.base")}</label>
-      <select
-        id="base"
-        value={base}
-        onChange={(e) => setBase(e.target.value)}
-      >
+      <select id="base" value={base} onChange={(e) => setBase(e.target.value)}>
         {currencies.map((c) => (
           <option key={c.code} value={c.code}>
             {c.code} - {c.name}
@@ -59,7 +89,32 @@ export function AnalysisForm() {
         ))}
       </div>
 
+      <div className="date-row">
+        <div>
+          <label htmlFor="startDate">{t("form.startDate")}</label>
+          <input
+            id="startDate"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="endDate">{t("form.endDate")}</label>
+          <input
+            id="endDate"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div>
+      </div>
+
       {error && <div className="error">{error}</div>}
+
+      <button type="submit" disabled={loading}>
+        {loading ? t("form.submitting") : t("form.submit")}
+      </button>
     </form>
   );
 }
