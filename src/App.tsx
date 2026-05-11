@@ -5,13 +5,15 @@ import { logout } from "./api/client";
 import { AnalysisForm } from "./components/AnalysisForm";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { LoginForm } from "./components/LoginForm";
+import { ResultsChart } from "./components/ResultsChart";
+import { ResultsTable } from "./components/ResultsTable";
 import type { AnalyzeResponse } from "./types";
 import "./index.css";
 
 function App() {
   const { t } = useTranslation();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [, setResult] = useState<AnalyzeResponse | null>(null);
+  const [result, setResult] = useState<AnalyzeResponse | null>(null);
 
   async function handleLogout() {
     await logout();
@@ -42,9 +44,10 @@ function App() {
         </div>
       </header>
       <section className="content-grid">
-        <AnalysisForm onResult={setResult} />   {}
+        <AnalysisForm onResult={setResult} />
         <div className="results-column">
-          {}
+          <ResultsTable result={result} />
+          <ResultsChart result={result} />
         </div>
       </section>
     </main>
