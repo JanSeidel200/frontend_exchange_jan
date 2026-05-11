@@ -2,18 +2,21 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { logout } from "./api/client";
+import { AnalysisForm } from "./components/AnalysisForm";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { LoginForm } from "./components/LoginForm";
-import { AnalysisForm } from "./components/AnalysisForm";
+import type { AnalyzeResponse } from "./types";
 import "./index.css";
 
 function App() {
   const { t } = useTranslation();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [result, setResult] = useState<AnalyzeResponse | null>(null);
 
   async function handleLogout() {
     await logout();
     setLoggedIn(false);
+    setResult(null);
   }
 
   if (!loggedIn) {
@@ -39,8 +42,10 @@ function App() {
         </div>
       </header>
       <section className="content-grid">
-        <AnalysisForm />
-        <div /> {/* Placeholder pro výsledky */}
+        <AnalysisForm onResult={setResult} />   {}
+        <div className="results-column">
+          {}
+        </div>
       </section>
     </main>
   );
