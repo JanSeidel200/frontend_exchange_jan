@@ -154,3 +154,31 @@ label {
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.summary div {
+  border: 1px solid #d4d1ca;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.summary span { display: block; color: #7a7974; }
+.summary strong { display: block; font-size: 1.8rem; }
+
+table { width: 100%; border-collapse: collapse; }
+
+th, td {
+  border-bottom: 1px solid #d4d1ca;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+th { color: #7a7974; }
+
+.results-column { display: grid; gap: 1.5rem; }
