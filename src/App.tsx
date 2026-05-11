@@ -11,7 +11,7 @@ import "./index.css";
 function App() {
   const { t } = useTranslation();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [result, setResult] = useState<AnalyzeResponse | null>(null);
+  const [, setResult] = useState<AnalyzeResponse | null>(null);
 
   async function handleLogout() {
     await logout();
