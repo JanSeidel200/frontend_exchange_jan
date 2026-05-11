@@ -34,7 +34,9 @@ describe("ResultsTable", () => {
         }}
       />,
     );
-    expect(screen.getByText("CZK")).toBeInTheDocument();
-    expect(screen.getByText("25.0000")).toBeInTheDocument();
+    expect(screen.getByText("Strongest").nextElementSibling).toHaveTextContent("CZK");
+    expect(screen.getByRole("cell", { name: "CZK" })).toBeInTheDocument();
+    expect(screen.getByRole("cell", { name: "24.0000" })).toBeInTheDocument();
+    expect(screen.getByRole("cell", { name: "26.0000" })).toBeInTheDocument();
   });
 });
