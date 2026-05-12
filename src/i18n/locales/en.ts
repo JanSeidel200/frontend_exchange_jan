@@ -32,13 +32,14 @@ export const en = {
       noSymbol: "Select at least one currency to compare.",
       dateOrder: "End date must be after start date.",
       computeFailed: "Computation failed. Check inputs or API availability.",
+      rateLimit: "Too many requests. Please wait a minute and try again.",
     },
   },
   results: {
     placeholder: "Enter parameters and run the computation.",
     headingPrefix: "Results against",
-    strongest: "Strongest",
-    weakest: "Weakest",
+    strongest: "Strongest (Highest nominal value)",
+    weakest: "Weakest (Lowest nominal value)",
     chartHeading: "Rate evolution",
     table: {
       currency: "Currency",

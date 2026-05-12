@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
 import { analyzeRates, getCurrencies } from "../api/client";
 import type { AnalyzeResponse, CurrencyOption } from "../types";
@@ -54,8 +55,12 @@ export function AnalysisForm({ onResult }: Props) {
         end_date: endDate,
       });
       onResult(result);
-    } catch {
-      setError(t("form.errors.computeFailed"));
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 429) {
+        setError(t("form.errors.rateLimit"));
+      } else {
+        setError(t("form.errors.computeFailed"));
+      }
     } finally {
       setLoading(false);
     }

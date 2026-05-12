@@ -32,13 +32,14 @@ export const cs = {
       noSymbol: "Vyber alespoň jednu porovnávanou měnu.",
       dateOrder: "Koncové datum musí být po počátečním datu.",
       computeFailed: "Výpočet selhal. Zkontroluj vstupy nebo dostupnost API.",
+      rateLimit: "Příliš mnoho požadavků. Počkej minutu a zkus to znovu.",
     },
   },
   results: {
     placeholder: "Zadej parametry a spusť výpočet.",
     headingPrefix: "Výsledky vůči",
-    strongest: "Nejsilnější",
-    weakest: "Nejslabší",
+    strongest: "Nejsilnější (Největší nominální hodnota)",
+    weakest: "Nejslabší (Nejmenší nominální hodnota)",
     chartHeading: "Vývoj kurzů",
     table: {
       currency: "Měna",

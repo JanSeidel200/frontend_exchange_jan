@@ -31,10 +31,26 @@ export function ResultsTable({ result }: Props) {
         <div>
           <span>{t("results.strongest")}</span>
           <strong>{result.strongest_currency ?? "-"}</strong>
+          {result.strongest_currency && (
+            <small>
+              {formatNumber(
+                result.stats.find((s) => s.code === result.strongest_currency)
+                  ?.latest_rate ?? null,
+              )}
+            </small>
+          )}
         </div>
         <div>
           <span>{t("results.weakest")}</span>
           <strong>{result.weakest_currency ?? "-"}</strong>
+          {result.weakest_currency && (
+            <small>
+              {formatNumber(
+                result.stats.find((s) => s.code === result.weakest_currency)
+                  ?.latest_rate ?? null,
+              )}
+            </small>
+          )}
         </div>
       </div>
       <table>
