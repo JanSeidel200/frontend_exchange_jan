@@ -13,11 +13,18 @@ import "./index.css";
 
 type View = "dashboard" | "logs";
 
+const DEFAULT_SYMBOLS = ["CZK", "USD", "GBP", "PLN"];
+
 function App() {
   const { t } = useTranslation();
   const [loggedIn, setLoggedIn] = useState(false);
   const [result, setResult] = useState<AnalyzeResponse | null>(null);
   const [view, setView] = useState<View>("dashboard");
+
+  const [base, setBase] = useState("EUR");
+  const [symbols, setSymbols] = useState<string[]>(DEFAULT_SYMBOLS);
+  const [startDate, setStartDate] = useState("2025-01-01");
+  const [endDate, setEndDate] = useState("2025-01-31");
 
   async function handleLogout() {
     await logout();
@@ -58,7 +65,17 @@ function App() {
 
       {view === "dashboard" ? (
         <section className="content-grid">
-          <AnalysisForm onResult={setResult} />
+          <AnalysisForm
+            base={base}
+            symbols={symbols}
+            startDate={startDate}
+            endDate={endDate}
+            onBaseChange={setBase}
+            onSymbolsChange={setSymbols}
+            onStartDateChange={setStartDate}
+            onEndDateChange={setEndDate}
+            onResult={setResult}
+          />
           <div className="results-column">
             <ResultsTable result={result} />
             <ResultsChart result={result} />
