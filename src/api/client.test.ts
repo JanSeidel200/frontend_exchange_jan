@@ -2,13 +2,20 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const getMock = vi.fn();
 const postMock = vi.fn();
+const putMock = vi.fn();
 
 vi.mock("axios", () => ({
   default: {
     create: () => ({
       get: getMock,
       post: postMock,
+      put: putMock,
+      interceptors: {
+        request: { use: vi.fn() },
+        response: { use: vi.fn() },
+      },
     }),
+    isAxiosError: vi.fn(),
   },
 }));
 

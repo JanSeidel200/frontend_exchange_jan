@@ -24,7 +24,7 @@ describe("LoginForm", () => {
 
   test("calls onLoggedIn after successful login", async () => {
     const { login } = await import("../api/client");
-    vi.mocked(login).mockResolvedValueOnce({ username: "admin" });
+    vi.mocked(login).mockResolvedValue({username: "admin", message: "Logged in", access_token: "test-token"});
 
     const onLoggedIn = vi.fn();
     render(<LoginForm onLoggedIn={onLoggedIn} />);
