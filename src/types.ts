@@ -28,3 +28,8 @@ export type AnalyzeResponse = {
   stats: CurrencyStat[];
   series: Record<string, Record<string, number>>;
 };
+
+export type UserSettings = {
+  base: string;
+  symbols: string[];
+};

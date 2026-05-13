@@ -5,6 +5,12 @@ import App from "./App";
 
 vi.mock("./api/client", () => ({
   logout: vi.fn(() => Promise.resolve({ message: "Logged out" })),
+  getSettings: vi.fn(() =>
+    Promise.resolve({
+      base: "EUR",
+      symbols: ["CZK", "USD", "GBP", "PLN"],
+    }),
+  ),
   getCurrencies: vi.fn(() =>
     Promise.resolve([
       { code: "EUR", name: "Euro" },
@@ -49,8 +55,9 @@ describe("App", () => {
   });
 
   test("switches to dashboard after login", async () => {
-    render(<App />);
+    const { getSettings } = await import("./api/client");
 
+    render(<App />);
     fireEvent.click(screen.getByText("Mock login"));
 
     await waitFor(() => {
@@ -59,6 +66,7 @@ describe("App", () => {
       ).toBeInTheDocument();
     });
 
+    expect(vi.mocked(getSettings)).toHaveBeenCalled();
     expect(
       screen.getByRole("button", { name: /Logy|Logs/ }),
     ).toBeInTheDocument();
@@ -66,7 +74,6 @@ describe("App", () => {
 
   test("switches to logs view and back to dashboard", async () => {
     render(<App />);
-
     fireEvent.click(screen.getByText("Mock login"));
 
     await waitFor(() => {
@@ -79,7 +86,9 @@ describe("App", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /Zpět na analýzu|Back to analysis/ }),
+        screen.getByRole("button", {
+          name: /Zpět na analýzu|Back to analysis/,
+        }),
       ).toBeInTheDocument();
     });
 

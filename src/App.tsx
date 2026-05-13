@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { logout } from "./api/client";
+import { getSettings, logout } from "./api/client";
 import { AnalysisForm } from "./components/AnalysisForm";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { LoginForm } from "./components/LoginForm";
@@ -13,11 +13,39 @@ import "./index.css";
 
 type View = "dashboard" | "logs";
 
+const DEFAULT_SYMBOLS = ["CZK", "USD", "GBP", "PLN"];
+
 function App() {
   const { t } = useTranslation();
   const [loggedIn, setLoggedIn] = useState(false);
   const [result, setResult] = useState<AnalyzeResponse | null>(null);
   const [view, setView] = useState<View>("dashboard");
+
+  const [base, setBase] = useState("EUR");
+  const [symbols, setSymbols] = useState<string[]>(DEFAULT_SYMBOLS);
+  const [startDate, setStartDate] = useState("2025-01-01");
+  const [endDate, setEndDate] = useState("2025-01-31");
+
+  useEffect(() => {
+    if (!loggedIn) return;
+
+    let ignore = false;
+
+    getSettings()
+      .then((s) => {
+        if (ignore) return;
+        if (s.base) setBase(s.base);
+        if (s.symbols.length > 0) setSymbols(s.symbols);
+      })
+      .catch((err) => {
+        if (ignore) return;
+        console.error("Optional settings hydration failed:", err);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [loggedIn]);
 
   async function handleLogout() {
     await logout();
@@ -58,7 +86,17 @@ function App() {
 
       {view === "dashboard" ? (
         <section className="content-grid">
-          <AnalysisForm onResult={setResult} />
+          <AnalysisForm
+            base={base}
+            symbols={symbols}
+            startDate={startDate}
+            endDate={endDate}
+            onBaseChange={setBase}
+            onSymbolsChange={setSymbols}
+            onStartDateChange={setStartDate}
+            onEndDateChange={setEndDate}
+            onResult={setResult}
+          />
           <div className="results-column">
             <ResultsTable result={result} />
             <ResultsChart result={result} />

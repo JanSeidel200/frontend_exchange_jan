@@ -4,6 +4,23 @@ import axios from "axios";
 
 import { AnalysisForm } from "./AnalysisForm";
 
+const renderForm = (overrides: Partial<React.ComponentProps<typeof AnalysisForm>> = {}) => {
+  const props: React.ComponentProps<typeof AnalysisForm> = {
+    base: "EUR",
+    symbols: ["USD", "CZK"],
+    startDate: "2025-01-01",
+    endDate: "2025-01-31",
+    onBaseChange: vi.fn(),
+    onSymbolsChange: vi.fn(),
+    onStartDateChange: vi.fn(),
+    onEndDateChange: vi.fn(),
+    onResult: vi.fn(),
+    ...overrides,
+  };
+
+  return { ...render(<AnalysisForm {...props} />), props };
+};
+
 vi.mock("../api/client", () => ({
   getCurrencies: vi.fn(() =>
     Promise.resolve([
@@ -33,7 +50,7 @@ describe("AnalysisForm", () => {
   });
 
   test("renders form heading and base selector", async () => {
-    render(<AnalysisForm onResult={() => undefined} />);
+    renderForm();
 
     await waitFor(() => {
       expect(
@@ -45,7 +62,7 @@ describe("AnalysisForm", () => {
   test("submit calls onResult on success", async () => {
     const onResult = vi.fn();
 
-    render(<AnalysisForm onResult={onResult} />);
+    renderForm({ onResult });
 
     await waitFor(() => {
       expect(
@@ -61,7 +78,12 @@ describe("AnalysisForm", () => {
   });
 
   test("shows translated error when no symbols are selected", async () => {
-    render(<AnalysisForm onResult={() => undefined} />);
+    const symbols: string[] = ["USD", "CZK", "GBP", "PLN"];
+    const onSymbolsChange = vi.fn((next: string[]) => {
+      symbols.splice(0, symbols.length, ...next);
+    });
+
+    renderForm({ symbols, onSymbolsChange });
 
     await waitFor(() => {
       expect(screen.getByLabelText("PLN")).toBeInTheDocument();
@@ -84,29 +106,27 @@ describe("AnalysisForm", () => {
   });
 
   test("shows translated error when end date is before start date", async () => {
-    render(<AnalysisForm onResult={() => undefined} />);
+    renderForm({
+        startDate: "2025-02-01",
+        endDate: "2025-01-01",
+    });
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/Od|From/)).toBeInTheDocument();
-    });
-
-    fireEvent.change(screen.getByLabelText(/Od|From/), {
-      target: { value: "2025-02-01" },
-    });
-    fireEvent.change(screen.getByLabelText(/Do|To/), {
-      target: { value: "2025-01-01" },
+        expect(
+        screen.getByRole("button", { name: /Spočítat|Compute/ }),
+        ).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole("button", { name: /Spočítat|Compute/ }));
 
     await waitFor(() => {
-      expect(
+        expect(
         screen.getByText(
-          /Koncové datum musí být po počátečním datu\.|End date must be after start date\./,
+            /Koncové datum musí být po počátečním datu\.|End date must be after start date\./,
         ),
-      ).toBeInTheDocument();
+        ).toBeInTheDocument();
     });
-  });
+    });
 
   test("shows translated rate limit error on 429", async () => {
     const { analyzeRates } = await import("../api/client");
@@ -116,7 +136,7 @@ describe("AnalysisForm", () => {
     });
     vi.spyOn(axios, "isAxiosError").mockReturnValue(true);
 
-    render(<AnalysisForm onResult={() => undefined} />);
+    renderForm();
 
     await waitFor(() => {
       expect(
@@ -140,7 +160,7 @@ describe("AnalysisForm", () => {
     vi.mocked(analyzeRates).mockRejectedValueOnce(new Error("boom"));
     vi.spyOn(axios, "isAxiosError").mockReturnValue(false);
 
-    render(<AnalysisForm onResult={() => undefined} />);
+    renderForm();
 
     await waitFor(() => {
       expect(

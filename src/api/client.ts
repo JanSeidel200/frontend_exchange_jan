@@ -4,6 +4,7 @@ import type {
   AnalyzeRequest,
   AnalyzeResponse,
   CurrencyOption,
+  UserSettings,
 } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
@@ -49,4 +50,14 @@ export async function analyzeRates(
 export async function getLogs(): Promise<string[]> {
   const response = await api.get<{ logs: string[] }>("/logs");
   return response.data.logs;
+}
+
+export async function getSettings(): Promise<UserSettings> {
+  const response = await api.get<UserSettings>("/settings");
+  return response.data;
+}
+
+export async function saveSettings(payload: UserSettings): Promise<UserSettings> {
+  const response = await api.put<UserSettings>("/settings", payload);
+  return response.data;
 }
