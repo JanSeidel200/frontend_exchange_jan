@@ -1,17 +1,121 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, test, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import App from "./App";
 
 vi.mock("./api/client", () => ({
-  checkHealth: vi.fn(() => Promise.resolve({ status: "ok" })),
+  logout: vi.fn(() => Promise.resolve({ message: "Logged out" })),
+  getCurrencies: vi.fn(() =>
+    Promise.resolve([
+      { code: "EUR", name: "Euro" },
+      { code: "USD", name: "US Dollar" },
+      { code: "CZK", name: "Czech koruna" },
+      { code: "GBP", name: "British pound" },
+    ]),
+  ),
+  analyzeRates: vi.fn(() =>
+    Promise.resolve({
+      base: "EUR",
+      start_date: "2025-01-01",
+      end_date: "2025-01-02",
+      strongest_currency: "CZK",
+      weakest_currency: "USD",
+      stats: [],
+      series: {},
+    }),
+  ),
+  getLogs: vi.fn(() =>
+    Promise.resolve([
+      "2025-01-15 | INFO | app.main | Application started",
+    ]),
+  ),
+  login: vi.fn(),
+}));
+
+vi.mock("./components/LoginForm", () => ({
+  LoginForm: ({ onLoggedIn }: { onLoggedIn: () => void }) => (
+    <button onClick={onLoggedIn}>Mock login</button>
+  ),
 }));
 
 describe("App", () => {
-  test("renders title", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("renders login screen when not logged in", () => {
     render(<App />);
+    expect(screen.getByText("Mock login")).toBeInTheDocument();
+  });
+
+  test("switches to dashboard after login", async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByText("Mock login"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Odhlásit|Log out/ }),
+      ).toBeInTheDocument();
+    });
+
     expect(
-        screen.getByText(/Exchange Rate Analyzer|Analýza měnových kurzů/),
+      screen.getByRole("button", { name: /Logy|Logs/ }),
     ).toBeInTheDocument();
+  });
+
+  test("switches to logs view and back to dashboard", async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByText("Mock login"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Logy|Logs/ }),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Logy|Logs/ }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Zpět na analýzu|Back to analysis/ }),
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/Application started/)).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /Zpět na analýzu|Back to analysis/,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Logy|Logs/ }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  test("logout returns user to login screen", async () => {
+    const { logout } = await import("./api/client");
+
+    render(<App />);
+    fireEvent.click(screen.getByText("Mock login"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Odhlásit|Log out/ }),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Odhlásit|Log out/ }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Mock login")).toBeInTheDocument();
+    });
+
+    expect(vi.mocked(logout)).toHaveBeenCalled();
   });
 });
