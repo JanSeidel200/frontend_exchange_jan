@@ -22,35 +22,32 @@ export function ResultsTable({ result }: Props) {
     );
   }
 
+  const strongestRate =
+    result.stats.find((s) => s.code === result.strongest_currency)?.latest_rate ??
+    null;
+  const weakestRate =
+    result.stats.find((s) => s.code === result.weakest_currency)?.latest_rate ??
+    null;
+
   return (
     <section className="panel">
       <h2>
         {t("results.headingPrefix")} {result.base}
       </h2>
       <div className="summary">
-        <div>
-          <span>{t("results.strongest")}</span>
-          <strong>{result.strongest_currency ?? "-"}</strong>
-          {result.strongest_currency && (
-            <small>
-              {formatNumber(
-                result.stats.find((s) => s.code === result.strongest_currency)
-                  ?.latest_rate ?? null,
-              )}
-            </small>
-          )}
+        <div className="summary__card summary__card--strongest">
+          <span className="summary__label">{t("results.strongest")}</span>
+          <div className="summary__value">
+            <strong>{result.strongest_currency ?? "-"}</strong>
+            <span className="summary__rate">{formatNumber(strongestRate)}</span>
+          </div>
         </div>
-        <div>
-          <span>{t("results.weakest")}</span>
-          <strong>{result.weakest_currency ?? "-"}</strong>
-          {result.weakest_currency && (
-            <small>
-              {formatNumber(
-                result.stats.find((s) => s.code === result.weakest_currency)
-                  ?.latest_rate ?? null,
-              )}
-            </small>
-          )}
+        <div className="summary__card summary__card--weakest">
+          <span className="summary__label">{t("results.weakest")}</span>
+          <div className="summary__value">
+            <strong>{result.weakest_currency ?? "-"}</strong>
+            <span className="summary__rate">{formatNumber(weakestRate)}</span>
+          </div>
         </div>
       </div>
       <table>
