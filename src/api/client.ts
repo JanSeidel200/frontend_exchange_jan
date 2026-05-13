@@ -45,3 +45,8 @@ export async function analyzeRates(
   );
   return response.data;
 }
+
+export async function getLogs(): Promise<string[]> {
+  const response = await api.get<{ logs: string[] }>("/logs");
+  return response.data.logs;
+}
