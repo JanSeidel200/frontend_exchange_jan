@@ -24,7 +24,7 @@ describe("LoginForm", () => {
 
   test("calls onLoggedIn after successful login", async () => {
     const { login } = await import("../api/client");
-    vi.mocked(login).mockResolvedValueOnce({ username: "admin" });
+    vi.mocked(login).mockResolvedValue({username: "admin", message: "Logged in", access_token: "test-token"});
 
     const onLoggedIn = vi.fn();
     render(<LoginForm onLoggedIn={onLoggedIn} />);
@@ -60,6 +60,32 @@ describe("LoginForm", () => {
           /Neplatné přihlašovací údaje\.|Invalid credentials\./,
         ),
       ).toBeInTheDocument();
+    });
+  });
+
+  test("updates username when typed", async () => {
+    const { login } = await import("../api/client");
+    vi.mocked(login).mockResolvedValue({
+      username: "different-user",
+      message: "Logged in",
+      access_token: "tok",
+    });
+
+    const onLoggedIn = vi.fn();
+    render(<LoginForm onLoggedIn={onLoggedIn} />);
+
+    const usernameInput = screen.getByLabelText(/Uživatel|Username/);
+    fireEvent.change(usernameInput, { target: { value: "different-user" } });
+
+    expect(usernameInput).toHaveValue("different-user");
+
+    fireEvent.change(screen.getByLabelText(/Heslo|Password/), {
+      target: { value: "secret" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Přihlásit|Log in/ }));
+
+    await waitFor(() => {
+      expect(vi.mocked(login)).toHaveBeenCalledWith("different-user", "secret");
     });
   });
 });
