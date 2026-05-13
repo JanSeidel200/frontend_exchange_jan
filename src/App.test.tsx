@@ -11,6 +11,9 @@ vi.mock("./api/client", () => ({
       symbols: ["CZK", "USD", "GBP", "PLN"],
     }),
   ),
+  saveSettings: vi.fn(() =>
+    Promise.resolve({ base: "EUR", symbols: ["CZK", "USD", "GBP", "PLN"] }),
+  ),
   getCurrencies: vi.fn(() =>
     Promise.resolve([
       { code: "EUR", name: "Euro" },
@@ -126,5 +129,53 @@ describe("App", () => {
     });
 
     expect(vi.mocked(logout)).toHaveBeenCalled();
+  });
+
+  test("logs error when settings hydration fails", async () => {
+    const { getSettings } = await import("./api/client");
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    vi.mocked(getSettings).mockRejectedValueOnce(new Error("Settings unavailable"));
+
+    render(<App />);
+    fireEvent.click(screen.getByText("Mock login"));
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Settings hydration failed:",
+        expect.any(Error),
+      );
+    });
+
+    consoleSpy.mockRestore();
+  });
+
+  test("logs error when settings save fails", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { saveSettings } = await import("./api/client");
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    vi.mocked(saveSettings).mockRejectedValueOnce(new Error("Save failed"));
+
+    render(<App />);
+    fireEvent.click(screen.getByText("Mock login"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Odhlásit|Log out/ }),
+      ).toBeInTheDocument();
+    });
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Settings save failed:",
+        expect.any(Error),
+      );
+    });
+
+    consoleSpy.mockRestore();
+    vi.useRealTimers();
   });
 });
