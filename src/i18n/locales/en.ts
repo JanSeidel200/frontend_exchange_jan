@@ -4,6 +4,8 @@ export const en = {
     subtitle: "Data from Frankfurter API",
     logout: "Log out",
     backendStatus: "Backend status",
+    showLogs: "Logs",
+    showDashboard: "Back to analysis",
   },
   login: {
     title: "Exchange Rate Analyzer",
@@ -49,5 +51,12 @@ export const en = {
       max: "Maximum",
       points: "Data points",
     },
+  },
+  logs: {
+    title: "System logs",
+    subtitle: "Last 200 application log records",
+    empty: "No logs yet.",
+    refresh: "Refresh",
+    loadFailed: "Failed to load logs.",
   },
 };

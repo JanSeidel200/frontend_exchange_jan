@@ -191,3 +191,60 @@ th { color: #7a7974; }
   font-size: 1rem;
   margin-top: 0.25rem;
 }
+
+.ghost-button {
+  background: transparent !important;
+  color: inherit !important;
+  border: 1px solid currentColor;
+}
+
+.logs-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.logs-panel__header button {
+  width: auto;
+  margin: 0;
+}
+
+.logs-viewer {
+  max-height: 600px;
+  overflow: auto;
+  background: #1a1814;
+  color: #e8e6df;
+  padding: 1rem;
+  border-radius: 12px;
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.logs-line {
+  padding: 0.15rem 0.5rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border-left: 3px solid transparent;
+}
+
+.log-info {
+  border-left-color: #4a90c2;
+}
+
+.log-warning {
+  border-left-color: #d4a017;
+  background: rgba(212, 160, 23, 0.08);
+}
+
+.log-error {
+  border-left-color: #c44a4a;
+  background: rgba(196, 74, 74, 0.12);
+  color: #ffb4b4;
+}
+
+.log-default {
+  border-left-color: #555;
+}
