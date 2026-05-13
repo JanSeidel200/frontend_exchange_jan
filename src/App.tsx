@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getSettings, logout } from "./api/client";
+import { getSettings, logout, saveSettings } from "./api/client";
 import { AnalysisForm } from "./components/AnalysisForm";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { LoginForm } from "./components/LoginForm";
@@ -26,6 +26,8 @@ function App() {
   const [startDate, setStartDate] = useState("2025-01-01");
   const [endDate, setEndDate] = useState("2025-01-31");
 
+  const [hydrated, setHydrated] = useState(false);
+
   useEffect(() => {
     if (!loggedIn) return;
 
@@ -38,14 +40,28 @@ function App() {
         if (s.symbols.length > 0) setSymbols(s.symbols);
       })
       .catch((err) => {
-        if (ignore) return;
-        console.error("Optional settings hydration failed:", err);
+        if (!ignore) console.error("Settings hydration failed:", err);
+      })
+      .finally(() => {
+        if (!ignore) setHydrated(true);
       });
 
     return () => {
       ignore = true;
     };
   }, [loggedIn]);
+
+  useEffect(() => {
+    if (!loggedIn || !hydrated) return;
+
+    const handle = setTimeout(() => {
+      saveSettings({ base, symbols }).catch((err) => {
+        console.error("Settings save failed:", err);
+      });
+    }, 800);
+
+    return () => clearTimeout(handle);
+  }, [base, symbols, loggedIn, hydrated]);
 
   async function handleLogout() {
     await logout();
