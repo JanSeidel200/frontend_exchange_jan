@@ -4,6 +4,8 @@ export const cs = {
     subtitle: "Data z Frankfurter API",
     logout: "Odhlásit",
     backendStatus: "Stav backendu",
+    showLogs: "Logy",
+    showDashboard: "Zpět na analýzu",
   },
   login: {
     title: "Analýza měnových kurzů",
@@ -49,5 +51,12 @@ export const cs = {
       max: "Maximum",
       points: "Počet dnů",
     },
+  },
+  logs: {
+    title: "Systémové logy",
+    subtitle: "Posledních 200 záznamů z aplikace",
+    empty: "Zatím žádné logy.",
+    refresh: "Obnovit",
+    loadFailed: "Nepodařilo se načíst logy.",
   },
 };
